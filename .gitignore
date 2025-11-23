@@ -1,0 +1,95 @@
+# Claude Code Local Files (Auto-generated - DO NOT COMMIT)
+.claude/session-counter.json
+.claude/prompt-history.json
+.claude/post-summary-debug.log
+.claude/failed-comment-*.txt
+.claude-prompt-*.md
+.claude/session-counter.lock
+.claude/session-tracking.json
+
+# Development Logs (Local only)
+docs/dev-logs/
+
+# Backup Files
+*.backup
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE Files (Customize based on your team)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment Files (IMPORTANT: Never commit secrets!)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+
+# ============================================
+# PROJECT-SPECIFIC IGNORES
+# Add your language/framework specific ignores below
+# ============================================
+
+# Node.js (Uncomment if using Node.js)
+# node_modules/
+# npm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
+# .npm
+# dist/
+# build/
+
+# Python (Uncomment if using Python)
+# __pycache__/
+# *.py[cod]
+# *$py.class
+# *.so
+# .Python
+# venv/
+# ENV/
+# .venv
+# *.egg-info/
+
+# Rust (Uncomment if using Rust)
+# target/
+# Cargo.lock
+# **/*.rs.bk
+
+# Go (Uncomment if using Go)
+# *.exe
+# *.exe~
+# *.dll
+# *.so
+# *.dylib
+# vendor/
+
+# Java (Uncomment if using Java)
+# *.class
+# *.jar
+# *.war
+# target/
+# .gradle/
+
+# Build Outputs (Generic)
+# dist/
+# build/
+# out/
+# bin/
+
+# Test Coverage
+# coverage/
+# .nyc_output/
+# htmlcov/
+
+# ============================================
+# CUSTOMIZE FOR YOUR PROJECT
+# Uncomment relevant sections above or add your own patterns
+# ============================================
