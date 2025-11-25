@@ -1,5 +1,33 @@
 # GitHub Configuration
 
+## Workflows
+
+This repository includes two optimized GitHub Actions workflows for Claude integration:
+
+### claude.yml - Interactive @claude Bot
+- **Purpose:** Responds to @claude mentions in issues and PRs
+- **Triggers:** Issue comments, PR comments, reviews, new issues with @claude
+- **Features:**
+  - 30-minute timeout protection
+  - Concurrency control to prevent abuse
+  - Failure notifications
+  - Full git history access
+  - Optional review-only mode (commented out by default)
+
+### claude-code-review.yml - Automatic PR Reviews
+- **Purpose:** Automatically reviews pull requests
+- **Triggers:** PR opened or synchronized (with smart path filtering)
+- **Features:**
+  - PR size checking (skips PRs >50 files or >2000 lines)
+  - Smart file filtering (excludes lock files, minified files)
+  - Structured review template with severity levels
+  - Failure notifications
+  - Full code analysis tools (Read, Glob, Grep)
+
+**See `.github/workflows/` for the actual workflow files.**
+
+---
+
 ## Issue Templates
 
 This repository uses custom issue templates for Feature Requests and Bug Reports.
@@ -32,11 +60,12 @@ Both templates guide you through the process without triggering unwanted automat
 
 ## Configuration Files
 
-- **claude.yml** - Disables automatic GitHub Claude responses
+- **claude.yml** - Interactive @claude bot with safety features
+- **claude-code-review.yml** - Automatic PR reviews with size limits
 - **ISSUE_TEMPLATE/** - Custom issue templates
 
 ---
 
 For complete workflow documentation, see:
-- `COMPLETE-VISUAL-WORKFLOW.md`
-- `FINAL-WORKFLOW.md`
+- `.claude/WORKFLOW.md` - Single source of truth
+- `GITHUB-CLAUDE-SETUP.md` - Setup instructions

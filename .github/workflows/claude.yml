@@ -10,7 +10,7 @@ on:
   pull_request_review:
     types: [submitted]
 
-# Prevent abuse - max 5 concurrent Claude requests
+# Prevent abuse - limit concurrent Claude requests
 concurrency:
   group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
   cancel-in-progress: false
@@ -25,11 +25,11 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
+      contents: read
+      pull-requests: read
+      issues: read
       id-token: write
-      actions: read
+      actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,33 +41,28 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
-          prompt: |
-            **IMPORTANT - REVIEW ONLY MODE**
 
-            You are in REVIEW-ONLY mode. Your role is to provide expert guidance and analysis WITHOUT making any code changes.
+          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
+          # prompt: 'Update the pull request description to include a summary of changes.'
 
-            ✅ You SHOULD:
-            - Review and analyze code, specifications, and designs
-            - Provide suggestions and recommendations
-            - Point out potential issues, bugs, or improvements
-            - Answer technical questions
-            - Read existing files and code
-            - Explain concepts and best practices
+          # Optional: Add claude_args to customize behavior and configuration
+          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+          # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
+          # claude_args: '--allowed-tools Bash(gh pr:*)'
 
-            ❌ You MUST NOT:
-            - Make any code changes (Edit, Write, NotebookEdit)
-            - Create or modify files
-            - Create pull requests or commits
-            - Run tests or build commands
-
-            If asked to implement code, politely remind the user that you're configured for review/advisory only.
-
-            ---
-
-            User request: ${{ github.event.comment.body || github.event.issue.body || github.event.review.body }}
-          claude_args: '--allowed-tools "Bash(gh issue:*),Bash(gh pr:*),Bash(gh search:*),Read,Glob,Grep,WebFetch,WebSearch"'
+          # Optional: Enable REVIEW-ONLY mode (uncomment to restrict Claude from making code changes)
+          # prompt: |
+          #   **IMPORTANT - REVIEW ONLY MODE**
+          #   You are in REVIEW-ONLY mode. Provide guidance and analysis WITHOUT making code changes.
+          #   ✅ You SHOULD: Review code, provide suggestions, answer questions, read files
+          #   ❌ You MUST NOT: Make code changes, create/modify files, create PRs/commits
+          #   ---
+          #   User request: ${{ github.event.comment.body || github.event.issue.body || github.event.review.body }}
+          # claude_args: '--allowed-tools "Bash(gh issue:*),Bash(gh pr:*),Bash(gh search:*),Read,Glob,Grep,WebFetch,WebSearch"'
 
       - name: Notify on failure
         if: failure()

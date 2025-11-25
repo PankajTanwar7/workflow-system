@@ -23,6 +23,9 @@ A complete, battle-tested workflow template that combines:
 
 ### 🤖 Dual AI System
 - **@claude** (GitHub bot) - Reviews specifications and pull requests (review-only mode)
+  - Production-ready workflows with timeout protection
+  - Automatic PR reviews with size limits (<50 files/<2000 lines)
+  - Smart file filtering (excludes lock files, minified files)
 - **ClaudeCode** (local) - Implements features based on consensus
 
 ### 📋 Complete Workflow

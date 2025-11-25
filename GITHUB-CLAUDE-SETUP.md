@@ -82,57 +82,31 @@ CLAUDE_CODE_OAUTH_TOKEN  Updated YYYY-MM-DD
 
 ---
 
-### **Step 3: Create GitHub Actions Workflow**
+### **Step 3: Verify GitHub Actions Workflows**
 
-Create the workflow file that responds to @claude mentions:
+This template includes optimized workflow files in `.github/workflows/`:
 
+**✅ Already included:**
+- `claude.yml` - Interactive @claude bot with safety features
+- `claude-code-review.yml` - Automatic PR reviews with size limits
+
+**Features:**
+- ✅ 30-minute timeout protection
+- ✅ Concurrency control (prevents spam)
+- ✅ Failure notifications
+- ✅ Full git history access
+- ✅ PR size checking (auto-review only for PRs <50 files/<2000 lines)
+- ✅ Smart file filtering (excludes lock files)
+
+**Verify they exist:**
 ```bash
-# Create workflows directory if it doesn't exist
-mkdir -p .github/workflows
-
-# Create the Claude workflow file
-cat > .github/workflows/claude.yml << 'EOF'
-name: Claude Code
-
-on:
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
-  issues:
-    types: [opened, assigned]
-  pull_request_review:
-    types: [submitted]
-
-jobs:
-  claude:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-      id-token: write
-      actions: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Run Claude Code
-        uses: anthropics/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-EOF
-
-# Verify the file was created
-cat .github/workflows/claude.yml
+ls -la .github/workflows/
+# Should show:
+# - claude.yml
+# - claude-code-review.yml
 ```
+
+**No need to create manually!** These files are already configured and production-ready.
 
 ---
 

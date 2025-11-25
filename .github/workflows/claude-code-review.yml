@@ -3,16 +3,22 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize]
-    # Smart filtering - skip non-code changes
+    # Option A: Selective path filtering - Review code + important docs, skip lock files
     paths:
       - 'src/**'
       - 'lib/**'
       - 'app/**'
       - 'tests/**'
-      - '!**/*.md'
+      - 'docs/**'           # Include documentation folder
+      - 'CLAUDE.md'         # Include project instructions
+      - 'README.md'         # Include main readme
       - '!**/package-lock.json'
       - '!**/yarn.lock'
       - '!**/pnpm-lock.yaml'
+      - '!**/poetry.lock'
+      - '!**/Pipfile.lock'
+      - '!**/*.min.js'      # Exclude minified files
+      - '!**/*.bundle.js'
 
 jobs:
   claude-review:
@@ -45,12 +51,12 @@ jobs:
 
           # Count only reviewable files (exclude lock files, generated files)
           REVIEWABLE_FILES=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[] | select(
-            .path | test("(package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml|\\.min\\.js|\\.bundle\\.js)$") | not
+            .path | test("(package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml|poetry\\.lock|Pipfile\\.lock|\\.min\\.js|\\.bundle\\.js)$") | not
           ) | .path' | wc -l)
 
           # Count additions in reviewable files only
           REVIEWABLE_ADDITIONS=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[] | select(
-            .path | test("(package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml|\\.min\\.js|\\.bundle\\.js)$") | not
+            .path | test("(package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml|poetry\\.lock|Pipfile\\.lock|\\.min\\.js|\\.bundle\\.js)$") | not
           ) | .additions' | awk '{sum+=$1} END {print sum}')
 
           echo "total_files=$TOTAL_FILES" >> $GITHUB_OUTPUT
@@ -144,7 +150,7 @@ jobs:
 
             After completing your review, use `gh pr comment` with your Bash tool to post this review as a comment on the PR.
 
-          claude_args: '--allowed-tools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(gh pr files:*),Bash(gh issue view:*),Bash(gh search:*)"'
+          claude_args: '--allowed-tools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(gh pr files:*),Bash(gh issue view:*),Bash(gh search:*),Read,Glob,Grep"'
 
       - name: Notify on failure
         if: failure() && steps.pr-size.outputs.skip == 'false'
